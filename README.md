@@ -14,7 +14,7 @@ Agent_Pirate is a Telegram bot that allows users to search for and request movie
 
 1. **Clone the repository**
     ```bash
-    git clone https://github.com/yourusername/Agent_Pirate.git
+    git clone https://github.com/ankitkr492/Agent_Pirate
     cd Agent_Pirate
     ```
 
