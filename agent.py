@@ -27,7 +27,10 @@ def choose_best_with_groq(search_results, preferences=None):
     If preferences conflict or not available, use your best judgement.
     Ensure that the option you pick matches with the query:
     (for example, if the query is a TV show, pick a TV show, if the query has Season 1 ensure its first season).
-    Return only the chosen magnet:? link (do not explain).
+    Return only the chosen magnet:? link and the movie_title associated with it (do not explain).
+    Always return in this specific clean json format with no nextlines, tabs or extra text:
+    "magnet_link": "<the chosen magnet link>",
+    "movie_title": "<the chosen movie/show title>"
     """
 
     headers = {
@@ -47,5 +50,11 @@ def choose_best_with_groq(search_results, preferences=None):
     response = requests.post(url, headers=headers, json=payload)
     response.raise_for_status()
     data = response.json()
-    best_link = data["choices"][0]["message"]["content"].strip()
-    return best_link
+    #print(data)  # Debug: print full response
+    content = data["choices"][0]["message"]["content"]
+    parsed_content = json.loads(content)
+    best_link = parsed_content["magnet_link"].strip()
+    title = parsed_content["movie_title"].strip()
+    #print(f"Magnet Link: {best_link}")
+    #print(f"Title: {title}")
+    return {"magnet_link": best_link, "movie_title": title}
