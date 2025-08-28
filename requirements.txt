@@ -1,1 +1,5 @@
-pip install python-telegram-bot requests beautifulsoup4 groq apscheduler
+python-telegram-bot
+requests 
+beautifulsoup4 
+groq 
+apscheduler

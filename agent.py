@@ -3,10 +3,7 @@ import json
 import os
 
 def choose_best_with_groq(search_results, preferences=None):
-    """
-    Uses Groq API to choose the best option based on preferences.
-    preferences can be a dict if you want dynamic rules.
-    """
+
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     url = "https://api.groq.com/openai/v1/chat/completions"
 
