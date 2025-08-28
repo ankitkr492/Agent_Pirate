@@ -14,17 +14,21 @@ def movie_agent(query, scraper="tpb"):
 
     if not search_results:
         print("No results found.")
-        return
+        return None
 
     print("Choosing best option with Groq...")
-    magnet_link = choose_best_with_groq(truncated_results)
+    result = choose_best_with_groq(truncated_results)
+    magnet_link = result["magnet_link"]
+    title = result["movie_title"]
 
-    print(f"Chosen link: {magnet_link}")
+    print(f"Chosen title: {title}")
+    print(f"Chosen Magnet link: {magnet_link}")
     if magnet_link.startswith("magnet:?"):
         print("Opening magnet link in browser...")
         webbrowser.open(magnet_link)
+        return title
     else:
         print("No valid magnet link returned.")
 
 if __name__ == "__main__":
-    movie_agent("Severance S01")
+    movie_agent(input("Enter movie or TV show name: "))
