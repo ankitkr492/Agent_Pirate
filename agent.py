@@ -28,6 +28,7 @@ def choose_best_with_groq(search_results, preferences=None):
     Always return in this specific clean json format with no nextlines, tabs or extra text:
     "magnet_link": "<the chosen magnet link>",
     "movie_title": "<the chosen movie/show title>"
+    "title_type": "<Movie or Show>"
     """
 
     headers = {
@@ -52,6 +53,7 @@ def choose_best_with_groq(search_results, preferences=None):
     parsed_content = json.loads(content)
     best_link = parsed_content["magnet_link"].strip()
     title = parsed_content["movie_title"].strip()
+    title_type = parsed_content.get("title_type", "Unknown").strip()
     #print(f"Magnet Link: {best_link}")
     #print(f"Title: {title}")
-    return {"magnet_link": best_link, "movie_title": title}
+    return {"magnet_link": best_link, "movie_title": title, "title_type": title_type}
