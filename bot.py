@@ -188,6 +188,15 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             await query.edit_message_text("❌ Failed to process the selected item. Please try again.")
 
+        if selected['magnet_link'].startswith("magnet:?"):
+            print("Opening magnet link...")
+            webbrowser.open(selected['magnet_link'])
+            update_json(selected['title'], selected['title_type'])
+
+        else:
+            print("No valid magnet link returned.")
+            await query.edit_message_text(f"❌ No valid magnet link returned for {selected['title']}. Please try again.")
+
     elif query.data == "auto_decide":
         # results = user_search_results.get(user_id, [])
         llm_result = movie_agent(results, True)

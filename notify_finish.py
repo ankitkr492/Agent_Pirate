@@ -9,6 +9,10 @@ import difflib
 torrent_path = sys.argv[1]   # %F
 torrent_name = sys.argv[2]  # %N
 
+# torrent_path = sys.argv[1]   # %F
+# torrent_name = sys.argv[2]  # %N
+
+
 BOT_TOKEN = sys.argv[3]
 CHAT_ID = sys.argv[4]
 
@@ -25,7 +29,7 @@ async def moved():
     await bot.send_message(chat_id=CHAT_ID, text=f"🔔 Alert!!!\n Moved the file to media server: {torrent_name}\n")
 
 
-with open("/Users/ankit/Documents/Agent_Pirate/config/config.json", "r") as f:
+with open("C:/Users/ankit/OneDrive/Documents/Agent_Pirate/config/config.json", "r") as f:
     config = json.load(f)
 
 ACTIVE_REQUESTS_FILE = config["ACTIVE_REQUESTS_FILE"]
