@@ -1,6 +1,7 @@
 import webbrowser
 from scraper import scrape_tpb
-from agent import choose_best_with_groq
+from agent import choose_best_title
+from agent import get_title_list
 import json
 import os
 
@@ -49,7 +50,7 @@ def movie_agent(query, scraper="tpb"):
         return None
 
     print("Choosing best option with Groq...")
-    result = choose_best_with_groq(truncated_results)
+    result = choose_best_title(truncated_results)
     magnet_link = result["magnet_link"]
     title = result["movie_title"]
     title_type = result["title_type"]
@@ -66,6 +67,27 @@ def movie_agent(query, scraper="tpb"):
         print("No valid magnet link returned.")
 
 
+def title_list_agent(query, scraper="tpb"):
+    top_n = 5
+    print(f"Searching for: {query}")
+
+    if scraper == "tpb":
+        search_results = scrape_tpb(query)
+        truncated_results = search_results[:top_n]
+    else:
+        raise ValueError(f"Unknown scraper: {scraper}")
+
+    if not search_results:
+        print("No results found.")
+        return None
+
+    print("Getting List of titles with Groq...")
+    result = get_title_list(truncated_results)
+
+    print("Result:", result)
+    return result
+
 
 if __name__ == "__main__":
-    movie_agent(input("Enter movie or TV show name: "))
+    #movie_agent(input("Enter movie or TV show name: "))
+    title_list_agent(input("Enter movie or TV show name for title list: "))

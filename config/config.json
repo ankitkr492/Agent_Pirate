@@ -1,5 +1,9 @@
 {
     "ACTIVE_REQUESTS_FILE" : "/Users/ankit/Documents/Agent_Pirate/active_requests.json",
     "MOVIES_DIR" : "/Volumes/Ext-HDD/Cinema/Movies",
-    "SHOWS_DIR" : "/Volumes/Ext-HDD/Cinema/Shows"
+    "SHOWS_DIR" : "/Volumes/Ext-HDD/Cinema/Shows",
+    "TPB_URL" : "https://thepiratebay11.com",
+    "model" : "llama-3.3-70b-versatile",
+    "groq_url" : "https://api.groq.com/openai/v1/chat/completions",
+    "result_limit": 7
 }
