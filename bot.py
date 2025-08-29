@@ -56,7 +56,7 @@ async def request_movie(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if result:
         await update.message.reply_text(f"🎬 Found: {result}")
-        await update.message.reply_text(f"🍿 Sit back and relax... Movie will be added shortly.")
+        await update.message.reply_text(f"🍿 Sit back and relax... Media will be added to server shortly.")
     else:
         await update.message.reply_text("❌ No valid results found.")
 
