@@ -184,7 +184,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         llm_result = movie_agent([selected], False)
         if llm_result:
-            await query.edit_message_text(f"🎬 Confirmed: {llm_result['title']}\n📦 Size: {selected['size']}\n🍿 Media will be added to server shortly.")
+            await query.edit_message_text(f"🎬 Confirmed: {selected['title']}\n📦 Size: {selected['size']}\n🍿 Media will be added to server shortly.")
         else:
             await query.edit_message_text("❌ Failed to process the selected item. Please try again.")
 
