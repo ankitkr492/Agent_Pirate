@@ -128,6 +128,11 @@ async def request_movie(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     formatted_result = title_list_agent(results)
     print(f"Formatted Result: {formatted_result}")
+    
+    if not formatted_result or len(formatted_result) == 0:
+        await update.message.reply_text("❌ No valid results found.")
+        return
+    
     # Save results for user
     user_search_results[update.effective_user.id] = formatted_result
 
