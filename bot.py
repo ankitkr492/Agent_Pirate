@@ -25,7 +25,7 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # Allowed users (Telegram user IDs)
 ADMINS = [os.getenv("TELEGRAM_USER_ID")]
-ALLOWED_USERS = config["ALLOWED_USERS"].split(",")    # Add more IDs as needed
+ALLOWED_USERS = os.getenv("ALLOWED_USERS").split(",") + ADMINS    # Add more IDs as needed
 
 
 # --- Handlers ---
