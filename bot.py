@@ -151,7 +151,7 @@ async def request_movie(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Prepare buttons for each result
     keyboard = [
-        [InlineKeyboardButton(f"{item['size']}~{item['short_title'][:15]}~{item['resolution']}{item['release_year']}{item['encoding']}{item['source']}", callback_data=f"select_{idx}")]
+        [InlineKeyboardButton(f"{item['size']}~{item['title'][:20]}~{item['resolution']}{item['release_year']}{item['encoding']}{item['source']}", callback_data=f"select_{idx}")]
         for idx, item in enumerate(formatted_result)
     ]
     keyboard.append([InlineKeyboardButton("🤖 Auto Choose Best", callback_data="auto_decide")])
@@ -266,7 +266,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         # Rebuild original result list
         keyboard = [
-        [InlineKeyboardButton(f"{item['size']}~{item['short_title'][:20]}~{item['resolution']}{item['release_year']}{item['encoding']}{item['source']}", callback_data=f"select_{idx}")]
+        [InlineKeyboardButton(f"{item['size']}~{item['title'][:20]}~{item['resolution']}{item['release_year']}{item['encoding']}{item['source']}", callback_data=f"select_{idx}")]
         for idx, item in enumerate(results)
         ]
         keyboard.append([InlineKeyboardButton("🤖 Auto Choose Best", callback_data="auto_decide")])

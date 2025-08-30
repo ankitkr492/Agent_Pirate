@@ -39,7 +39,7 @@ def choose_best_title(search_results, preferences=None):
     Return only the chosen magnet:? link, the movie_title and title_type associated with it (do not explain).
     Always return in this specific clean json format with no nextlines, tabs or extra text:
     "magnet_link": "<the chosen magnet link>",
-    "movie_title": "<the chosen movie/show, give full title as it is with all the extra tags>",
+    "movie_title": "<the chosen movie/show title, give full title as it is with all the extra tags>",
     "size": "<File size as text (e.g., '1.2GB') only upto single decimal point>",
     "title_type": "<Movie or Show>"
     """
@@ -92,11 +92,10 @@ def get_title_list(search_results):
     You are a data formatting agent.
     Your task is to take scraped torrent search results received in JSON form and return a List of Python dictionary with the following structure of dictionary:
         "title": "<Exact Movie or Show Title>",
-        "short_title": "<Shortened Title without extra tags>",
         "resolution": "<Resolution like 1080p or 720p>",
-        "encoding": "<Encoding like x265 or x264> if available else keep blank",'",
-        "source": "<Source like BluRay or WEBRip> if available else keep blank",
-        "release_year": "<Release date in YYYY format> if available else keep blank",
+        "encoding": "<Encoding like x265 or x264 if available>",
+        "source": "<Source like BluRay or WEBRip if available",
+        "release_year": "<Release date in YYYY format if available",
         "magnet_link": "<Magnet link string>"
         "size": "<File size as text (e.g., '1.2GB') only upto single decimal point>",
         "title_type": "<Movie or Show>"
