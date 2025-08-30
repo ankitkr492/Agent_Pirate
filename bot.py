@@ -15,6 +15,11 @@ with open(os.getenv("AGENT_PIRATE_CONFIG_PATH"), "r") as f:
 
 REQUESTS_FILE = config["REQUESTS_FILE"]
 
+# Create requests.json if it doesn't exist
+if not os.path.exists(REQUESTS_FILE):
+    with open(REQUESTS_FILE, "w") as f:
+        json.dump([], f)
+
 # --- Logging ---
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
