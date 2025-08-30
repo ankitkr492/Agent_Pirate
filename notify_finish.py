@@ -93,6 +93,7 @@ if __name__ == "__main__":
             users = ADMINS + [user_id]
         else:
             print(f"User ID {user_id} is already in ADMINS, sending notification from ADMINS list only.")
+            users = ADMINS
 
     asyncio.run(finished(users))
 
