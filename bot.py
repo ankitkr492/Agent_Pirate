@@ -4,13 +4,16 @@ import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters, CallbackQueryHandler
 import webbrowser
+from dotenv import load_dotenv
 from scraper import scrape_tpb
 from agent import choose_best_title, get_title_list
 
-with open("config/config.json", "r") as f:
+load_dotenv()
+
+with open(os.getenv("AGENT_PIRATE_CONFIG_PATH"), "r") as f:
     config = json.load(f)
 
-ACTIVE_REQUESTS_FILE = config["ACTIVE_REQUESTS_FILE"]
+REQUESTS_FILE = config["REQUESTS_FILE"]
 
 # --- Logging ---
 logging.basicConfig(
@@ -21,22 +24,35 @@ logging.basicConfig(
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # Allowed users (Telegram user IDs)
-ALLOWED_USERS = [int(os.getenv("TELEGRAM_USER_ID"))]    # Add more IDs as needed
+ADMINS = [os.getenv("TELEGRAM_USER_ID")]
+ALLOWED_USERS = config["ALLOWED_USERS"].split(",")    # Add more IDs as needed
 
 
 # --- Handlers ---
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id not in ALLOWED_USERS:
+    if str(update.effective_user.id) not in ALLOWED_USERS:
         await update.message.reply_text("🚫 You are not authorized to use this bot.")
+        print("Unauthorised access: "+ str(update.effective_user.id))
         return
     await update.message.reply_text("👋 Welcome! Use /request <MovieName> to search.")
+    print("/start usage by: "+str(update.effective_user.id))
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if str(update.effective_user.id) not in ALLOWED_USERS:
+        await update.message.reply_text("🚫 You are not authorized to use this bot.")
+        print("Unauthorised access: "+ str(update.effective_user.id))
+        return
     await update.message.reply_text("ℹ️ Use /request <MovieName> to download a movie or TV show.\nYou can also select from the provided options or let the bot choose the best one for you.")
+    print("/help usage by: "+str(update.effective_user.id))
 
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if str(update.effective_user.id) not in ALLOWED_USERS:
+        await update.message.reply_text("🚫 You are not authorized to use this bot.")
+        print("Unauthorised access: "+ str(update.effective_user.id))
+        return
     await update.message.reply_text("❓ Unknown command. Use /help to see available commands.")
+    print("unknown message: " + " ".join(context.args) + "by: "+str(update.effective_user.id))
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.error(msg="Exception while handling an update:", exc_info=context.error)
@@ -61,51 +77,48 @@ def movie_agent(results, auto_decide: bool):
     
     return result
     
-    # if magnet_link.startswith("magnet:?"):
-    #     print("Opening magnet link...")
-    #     webbrowser.open(magnet_link)
-    #     update_json(title, title_type)
-    #     return title
-    # else:
-    #     print("No valid magnet link returned.")
-    #     return None
-
-    
 def title_list_agent(results):
     print("Getting List of titles in List<Dictionary> Format.")
     result = get_title_list(results)
     #print("Result:", result)
+    print("-------------------------Result Titles---------------------------")
+    for item in result:
+        print(f"Title: {item['title']} | Size: {item['size']}")
     return result
 
 #update active_requests.json for active requests
-def update_json(title, title_type):
+def update_json(title, title_type, user_id):
     data = []
-    if os.path.exists(ACTIVE_REQUESTS_FILE):
-        with open(ACTIVE_REQUESTS_FILE, "r") as f:
+    if os.path.exists(REQUESTS_FILE):
+        with open(REQUESTS_FILE, "r") as f:
             try:
                 data = json.load(f)
             except json.JSONDecodeError:
                 data = []
 
-    # overwrite if title already exists
+    # overwrite if title already exists for same user
     updated = False
     for entry in data:
-        if entry["title"] == title:
+        if entry["title"] == title and entry["user_id"] == user_id:
             entry["type"] = title_type
             updated = True
             break
-    if not updated:
-        data.append({"title": title, "type": title_type})
 
-    with open(ACTIVE_REQUESTS_FILE, "w") as f:
+    if not updated:
+        data.append({"title": title, "type": title_type, "user_id": user_id})
+
+    with open(REQUESTS_FILE, "w") as f:
         json.dump(data, f, indent=2)
 
 user_search_results = {}
 
 async def request_movie(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id not in ALLOWED_USERS:
+    if str(update.effective_user.id) not in ALLOWED_USERS:
         await update.message.reply_text("🚫 You are not authorized to use this bot.")
+        print("Unauthorised access: "+ str(update.effective_user.id))
         return
+    
+    print(f"/request usage by: {str(update.effective_user.id)} with args: {' '.join(context.args)}")
 
     if not context.args:
         await update.message.reply_text("⚠️ Usage: /request <MovieName>")
@@ -127,7 +140,7 @@ async def request_movie(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     formatted_result = title_list_agent(results)
-    print(f"Formatted Result: {formatted_result}")
+    # print(f"Formatted Result: {formatted_result}")
     
     if not formatted_result or len(formatted_result) == 0:
         await update.message.reply_text("❌ No valid results found.")
@@ -184,9 +197,19 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         llm_result = movie_agent([selected], False)
         if llm_result:
-            await query.edit_message_text(f"🎬 Confirmed: {llm_result['title']}\n📦 Size: {selected['size']}\n🍿 Media will be added to server shortly.")
+            await query.edit_message_text(f"🎬 Confirmed: {selected['title']}\n📦 Size: {selected['size']}\n🍿 Media will be added to server shortly.")
         else:
             await query.edit_message_text("❌ Failed to process the selected item. Please try again.")
+
+        if selected['magnet_link'].startswith("magnet:?"):
+            print("Opening magnet link...")
+            webbrowser.open(selected['magnet_link'])
+            update_json(selected['title'], selected['title_type'], str(update.effective_user.id))
+
+        else:
+            print("No valid magnet link returned.")
+            await query.edit_message_text(f"❌ No valid magnet link returned for {selected['title']}. Please try again.")
+
 
     elif query.data == "auto_decide":
         # results = user_search_results.get(user_id, [])
@@ -220,7 +243,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if selected['magnet_link'].startswith("magnet:?"):
                 print("Opening magnet link...")
                 webbrowser.open(selected['magnet_link'])
-                update_json(selected['title'], selected['title_type'])
+                update_json(selected['title'], selected['title_type'], str(update.effective_user.id))
 
             else:
                 print("No valid magnet link returned.")
@@ -274,7 +297,7 @@ def main():
         app.add_handler(CommandHandler("request", request_movie))
         app.add_handler(CommandHandler("help", help_command))
         # app.add_handler(MessageHandler(filters.COMMAND, unknown_command))  # Handle unknown commands
-        # app.add_error_handler(lambda update, context: logging.error(f"Update {update} caused error {context.error}"))
+        app.add_error_handler(lambda update, context: logging.error(f"Update {update} caused error {context.error}"))
         app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, unknown_command))
         app.add_handler(CallbackQueryHandler(button_callback))
     

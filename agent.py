@@ -1,8 +1,11 @@
 import requests
 import json
 import os
+from dotenv import load_dotenv
 
-with open("config/config.json", "r") as f:
+load_dotenv()
+
+with open(os.getenv("AGENT_PIRATE_CONFIG_PATH"), "r") as f:
     config = json.load(f)
 
 GROQ_API_KEYS = os.getenv("GROQ_API_KEYS")
@@ -36,7 +39,7 @@ def choose_best_title(search_results, preferences=None):
     Return only the chosen magnet:? link, the movie_title and title_type associated with it (do not explain).
     Always return in this specific clean json format with no nextlines, tabs or extra text:
     "magnet_link": "<the chosen magnet link>",
-    "movie_title": "<the chosen movie/show full title as it is>"
+    "movie_title": "<the chosen movie/show, give full title as it is with all the extra tags>",
     "size": "<File size as text (e.g., '1.2GB') only upto single decimal point>",
     "title_type": "<Movie or Show>"
     """
@@ -131,8 +134,8 @@ def get_title_list(search_results):
     data = response.json()
     #print(data)  # Debug: print full response
     content = data["choices"][0]["message"]["content"]
-    print("DEBUG formatted_result type:", type(content))
-    print("DEBUG first element:", content[0] if content else None)
+    # print("DEBUG formatted_result type:", type(content))
+    # print("DEBUG first element:", content[0] if content else None)
     parsed_content = json.loads(content)
     #print(f"Title List: {content}")
     return parsed_content

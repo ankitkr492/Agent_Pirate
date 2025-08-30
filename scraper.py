@@ -1,8 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 import json
+import os
+from dotenv import load_dotenv
 
-with open("config/config.json", "r") as f:
+load_dotenv()
+
+with open(os.getenv("AGENT_PIRATE_CONFIG_PATH"), "r") as f:
     config = json.load(f)
 
 TPB_URL = config["TPB_URL"]
