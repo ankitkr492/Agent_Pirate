@@ -21,16 +21,20 @@ logging.basicConfig(
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # Allowed users (Telegram user IDs)
-ALLOWED_USERS = [int(os.getenv("TELEGRAM_USER_ID"))]    # Add more IDs as needed
-
+USERS = os.getenv("TELEGRAM_USER_ID")    # Add more IDs as needed
+ALLOWED_USERS = USERS.split(",")
 
 # --- Handlers ---
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id not in ALLOWED_USERS:
+    if str(update.effective_user.id) not in ALLOWED_USERS:
         await update.message.reply_text("🚫 You are not authorized to use this bot.")
+        print(ALLOWED_USERS)
+        print("Unauthorised access: "+ str(update.effective_user.id))
         return
     await update.message.reply_text("👋 Welcome! Use /request <MovieName> to search.")
+    print(ALLOWED_USERS)
+    print("Authorised access for: "+ str(update.effective_user.id))
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("ℹ️ Use /request <MovieName> to download a movie or TV show.\nYou can also select from the provided options or let the bot choose the best one for you.")
@@ -103,9 +107,14 @@ def update_json(title, title_type):
 user_search_results = {}
 
 async def request_movie(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id not in ALLOWED_USERS:
+    if str(update.effective_user.id) not in ALLOWED_USERS:
         await update.message.reply_text("🚫 You are not authorized to use this bot.")
+        print(ALLOWED_USERS)
+        print("Unauthorised access: "+ str(update.effective_user.id))
         return
+    
+    print(ALLOWED_USERS)
+    print("/request bu user: "+ str(update.effective_user.id))
 
     if not context.args:
         await update.message.reply_text("⚠️ Usage: /request <MovieName>")

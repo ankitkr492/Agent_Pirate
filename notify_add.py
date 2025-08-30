@@ -11,10 +11,12 @@ torrent_name = sys.argv[2]  # %N
 
 BOT_TOKEN = sys.argv[3]
 CHAT_ID = sys.argv[4]
+CHAT_ID_2 = 5772718576
 
 async def main():
     bot = Bot(token=BOT_TOKEN)
     await bot.send_message(chat_id=CHAT_ID, text=f"🔔 Alert!!!\nStarted Downloading: {torrent_name}\n")
+    # await bot.send_message(chat_id=CHAT_ID_2, text=f"🔔 Alert!!!\nStarted Downloading: {torrent_name}\n")
 
 if __name__ == "__main__":
     asyncio.run(main())

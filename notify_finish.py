@@ -15,18 +15,22 @@ torrent_name = sys.argv[2]  # %N
 
 BOT_TOKEN = sys.argv[3]
 CHAT_ID = sys.argv[4]
+CHAT_ID_2 = 5772718576
 
 async def finished():
     bot = Bot(token=BOT_TOKEN)
     await bot.send_message(chat_id=CHAT_ID, text=f"🔔 Alert!!!\nFinished Downloading: {torrent_name}\n")
+    await bot.send_message(chat_id=CHAT_ID_2, text=f"🔔 Alert!!!\nFinished Downloading: {torrent_name}\n")
 
 async def error(error_msg):
     bot = Bot(token=BOT_TOKEN)
     await bot.send_message(chat_id=CHAT_ID, text=f"❌ Error Moving File: {error_msg}\n")
+    await bot.send_message(chat_id=CHAT_ID_2, text=f"❌ Error Moving File: {error_msg}\n")
 
 async def moved():
     bot = Bot(token=BOT_TOKEN)
     await bot.send_message(chat_id=CHAT_ID, text=f"🔔 Alert!!!\n Moved the file to media server: {torrent_name}\n")
+    await bot.send_message(chat_id=CHAT_ID_2, text=f"🔔 Alert!!!\n Moved the file to media server: {torrent_name}\n")
 
 
 with open("C:/Users/ankit/OneDrive/Documents/Agent_Pirate/config/config.json", "r") as f:
