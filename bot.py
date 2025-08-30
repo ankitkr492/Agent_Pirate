@@ -24,16 +24,24 @@ logging.basicConfig(
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # Allowed users (Telegram user IDs)
-ADMINS = [os.getenv("TELEGRAM_USER_ID")]
-ALLOWED_USERS = os.getenv("ALLOWED_USERS").split(",") + ADMINS    # Add more IDs as needed
+ADMINS = [os.getenv("TELEGRAM_USER_ID")] # Add more IDs in comma separated format in .env
+ALLOWED_USERS = os.getenv("ALLOWED_USERS").split(",") + ADMINS    # Add more IDs in comma separated format in .env
 
 
 # --- Handlers ---
-
+async def notify_admins(context, text):
+    for admin_id in ADMINS:
+        try:
+            await context.bot.send_message(chat_id=admin_id, text=text)
+        except Exception as e:
+            logging.error(f"Failed to notify admin {admin_id}: {e}")
+            
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if str(update.effective_user.id) not in ALLOWED_USERS:
         await update.message.reply_text("🚫 You are not authorized to use this bot.")
-        print("Unauthorised access: "+ str(update.effective_user.id))
+        print(f"Unauthorised access by @{update.effective_user.username} | ID: {str(update.effective_user.id)}")
+        await notify_admins(context,
+            f"⚠️ Unauthorized access attempt by user ID: {update.effective_user.id} with username: @{update.effective_user.username}")
         return
     await update.message.reply_text("👋 Welcome! Use /request <MovieName> to search.")
     print("/start usage by: "+str(update.effective_user.id))
@@ -41,7 +49,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if str(update.effective_user.id) not in ALLOWED_USERS:
         await update.message.reply_text("🚫 You are not authorized to use this bot.")
-        print("Unauthorised access: "+ str(update.effective_user.id))
+        print(f"Unauthorised access by @{update.effective_user.username} | ID: {str(update.effective_user.id)}")
+        await notify_admins(context,
+            f"⚠️ Unauthorized access attempt by user ID: {update.effective_user.id} with username: @{update.effective_user.username}")
         return
     await update.message.reply_text("ℹ️ Use /request <MovieName> to download a movie or TV show.\nYou can also select from the provided options or let the bot choose the best one for you.")
     print("/help usage by: "+str(update.effective_user.id))
@@ -49,7 +59,9 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if str(update.effective_user.id) not in ALLOWED_USERS:
         await update.message.reply_text("🚫 You are not authorized to use this bot.")
-        print("Unauthorised access: "+ str(update.effective_user.id))
+        print(f"Unauthorised access by @{update.effective_user.username} | ID: {str(update.effective_user.id)}")
+        await notify_admins(context,
+            f"⚠️ Unauthorized access attempt by user ID: {update.effective_user.id} with username: @{update.effective_user.username}")
         return
     await update.message.reply_text("❓ Unknown command. Use /help to see available commands.")
     print("unknown message: " + " ".join(context.args) + "by: "+str(update.effective_user.id))
@@ -115,7 +127,9 @@ user_search_results = {}
 async def request_movie(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if str(update.effective_user.id) not in ALLOWED_USERS:
         await update.message.reply_text("🚫 You are not authorized to use this bot.")
-        print("Unauthorised access: "+ str(update.effective_user.id))
+        print(f"Unauthorised access by @{update.effective_user.username} | ID: {str(update.effective_user.id)}")
+        await notify_admins(context,
+            f"⚠️ Unauthorized access attempt by user ID: {update.effective_user.id} with username: @{update.effective_user.username}")
         return
     
     print(f"/request usage by: {str(update.effective_user.id)} with args: {' '.join(context.args)}")
