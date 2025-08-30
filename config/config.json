@@ -3,8 +3,8 @@
     "MOVIES_DIR" : "E:\\Cinema\\Movies",
     "SHOWS_DIR" : "E:\\Cinema\\Shows",
     "TPB_URL" : "https://thepiratebay11.com",
-    "model1" : "llama-3.1-8b-instant",
-    "model" : "llama-3.3-70b-versatile",
+    "model" : "llama-3.1-8b-instant",
+    "model1" : "llama-3.3-70b-versatile",
     "groq_url" : "https://api.groq.com/openai/v1/chat/completions",
-    "result_limit": 7
+    "result_limit": 5
 }
